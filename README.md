@@ -1,116 +1,114 @@
 # Constructora App
 
-[![GitHub stars](https://img.shields.io/github/stars/agustino42/constructora-app?style=flat-square)](https://github.com/agustino42/constructora-app/stargazers)
-[![License](https://img.shields.io/github/license/agustino42/constructora-app?style=flat-square)](https://github.com/agustino42/constructora-app/blob/master/LICENSE)
+[![Estrellas en GitHub](https://img.shields.io/github/stars/agustino42/constructora-app?style=flat-square)](https://github.com/agustino42/constructora-app/stargazers)
+[![Licencia](https://img.shields.io/github/license/agustino42/constructora-app?style=flat-square)](https://github.com/agustino42/constructora-app/blob/master/LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-13.5-blue?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-5.0-black?style=flat-square&logo=prisma)](https://www.prisma.io/)
 
 ---
 
-## 📖 Overview
+## 📖 Descripción General
 
-**Constructora App** is a modern, full‑stack web application built with **Next.js** (app router) and **Prisma** for database interactions. It delivers a clean, responsive UI for catalog browsing, product management, and admin features such as settings, reports, and quotation handling.
+**Constructora App** es una aplicación web full‑stack moderna construida con **Next.js** (router de `app`) y **Prisma** para el acceso tipado a la base de datos. Proporciona una UI limpia y responsiva para navegar catálogos de productos, gestionar inventario y manejar cotizaciones y reportes administrativos.
 
-The project showcases:
-- Server‑side rendering with Next.js 13 (app directory).
-- Type‑safe database access via Prisma and a SQLite development DB.
-- Component‑driven UI with Tailwind CSS utility classes.
-- A lightweight settings system powered by a JSON‑based config.
+El proyecto muestra:
+- Renderizado del lado del servidor con Next.js 13 (directorio `app`).
+- Acceso a datos seguro y tipado mediante Prisma y una base SQLite de desarrollo.
+- UI basada en componentes React y estilos con Tailwind CSS.
+- Sistema de configuración ligera usando JSON.
 
-> *The design focuses on a premium look‑and‑feel: gradient hero, glass‑morphism cards, and smooth animations.*
-
----
-
-## 🛠️ Tech Stack
-
-| Category | Technology |
-| -------- | ---------- |
-| **Framework** | **Next.js 13** (app router) |
-| **Language** | **TypeScript** |
-| **Styling** | **Tailwind CSS** (utility‑first) |
-| **Database** | **Prisma ORM** – SQLite (dev) |
-| **UI Components** | Custom React components (e.g., `CatalogClient`, `ProductCard`, `AdminShell`) |
-| **Version Control** | Git + GitHub |
-| **Package Manager** | npm |
+> *El diseño busca una apariencia premium: hero con degradado, tarjetas con glass‑morphism y animaciones suaves.*
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Tecnologías
 
-### Prerequisites
-- **Node.js** ≥ 18 (LTS) 
-- **npm** (comes with Node) 
+| Categoría | Tecnología |
+|----------|------------|
+| **Framework** | **Next.js 13** (router de `app`) |
+| **Lenguaje** | **TypeScript** |
+| **Estilos** | **Tailwind CSS** (utility‑first) |
+| **Base de datos** | **Prisma ORM** – SQLite (desarrollo) |
+| **Componentes UI** | Componentes React personalizados (`CatalogClient`, `ProductCard`, `AdminShell`, etc.) |
+| **Control de versiones** | Git + GitHub |
+| **Gestor de paquetes** | npm |
+
+---
+
+## 🚀 Empezar
+
+### Requisitos Previos
+- **Node.js** ≥ 18 (LTS)
+- **npm** (instalado con Node)
 - **Git**
 
-### Installation
+### Instalación
 ```bash
-# Clone the repository
+# Clonar el repositorio
 git clone https://github.com/agustino42/constructora-app.git
 cd constructora-app
 
-# Install dependencies
+# Instalar dependencias
 npm install
 
-# Generate the SQLite dev database and seed data
+# Generar la base SQLite de desarrollo y aplicar migraciones
 npx prisma migrate dev --name init
-npm run seed   # (if a seed script is defined)
+
+# (Opcional) Poblar datos de ejemplo
+node prisma/seed.ts
 ```
 
-### Development
+### Desarrollo
 ```bash
-npm run dev   # Starts the dev server at http://localhost:3000
+npm run dev   # Inicia el servidor en http://localhost:3000
 ```
 
-### Production Build
+### Compilación para Producción
 ```bash
-npm run build   # Generate an optimized static & server‑rendered bundle
-npm start       # Run the production server
+npm run build   # Genera los bundles optimizados
+npm start       # Ejecuta el servidor en modo producción
 ```
 
 ---
 
-## 📂 Project Structure (high‑level)
+## 📂 Estructura del Proyecto (resumen)
 ```
-├─ prisma/                 # Prisma schema & seed scripts
-│   └─ schema.prisma
-├─ public/                 # Static assets (images, uploads)
-├─ src/
-│   ├─ app/                # Next.js routes (pages)
-│   │   ├─ admin/          # Admin UI (settings, reports, ajustes)
-│   │   ├─ catalogo/       # Product catalog page
-│   │   ├─ cotizacion/      # Quotation flow
-│   │   └─ layout.tsx       # Root layout (global CSS, fonts)
-│   ├─ components/        # Reusable React components
-│   ├─ lib/                # Helper utilities (e.g., settings loader)
-│   └─ styles/ (globals.css)
-└─ package.json            # Scripts & dependencies
+/src
+ ├─ /app               # Rutas de Next.js (pages)
+ │   ├─ page.tsx        # Home – catálogo de productos
+ │   ├─ layout.tsx      # Layout global (CSS, fuentes)
+ │   └─ admin/          # UI administrativa (ajustes, reportes, etc.)
+ ├─ /components        # Componentes reutilizables
+ ├─ /lib               # Utilidades (carga de settings, cliente Prisma)
+ ├─ /prisma            # Esquema y scripts de seed
+ └─ /public            # Assets estáticos (imágenes, uploads)
 ```
 
 ---
 
-## 🌱 Future Enhancements
+## 🌱 Mejoras Futuras
 
-1. **Authentication & Authorization** – Integrate NextAuth.js or a custom JWT solution for secure admin access.
-2. **Unit & Integration Tests** – Add Jest + React Testing Library coverage for critical components.
-3. **CI/CD Pipeline** – GitHub Actions workflow for automated linting, testing, and deployment to Vercel.
-4. **Database Migration to PostgreSQL** – Move to a production‑grade DB for scaling.
-5. **Internationalization (i18n)** – Support multiple languages using `next-intl`.
-6. **Enhanced Admin Dashboard** – Charts (Recharts) for sales/report analytics.
-7. **Image Optimization** – Leverage Next.js Image component and Cloudinary for storage.
-8. **Dark Mode & Theming** – Add UI toggle with CSS variables.
+1. **Autenticación y autorización** – Integrar `next-auth` con JWT o proveedores OAuth para proteger la zona admin.
+2. **Pruebas unitarias e integradas** – Añadir Jest + React Testing Library y tests de Prisma.
+3. **CI/CD** – Workflow de GitHub Actions con lint, tests y despliegue automático a Vercel.
+4. **Migración a PostgreSQL** – Cambiar a una base de datos de producción más robusta.
+5. **Internacionalización (i18n)** – Soporte multilingüe con `next-intl`.
+6. **Dashboard de análisis** – Gráficos con Recharts para métricas de ventas y reportes.
+7. **Optimización de imágenes** – Uso del componente `next/image` y almacenamiento en la nube (Cloudinary, S3).
+8. **Modo oscuro y temas** – Toggle de UI con variables CSS.
+9. **Accesibilidad** – Auditoría WCAG y atributos ARIA.
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contribuciones
 
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/awesome-feature`).
-3. Commit your changes with clear messages.
-4. Open a Pull Request describing the changes.
+1. Haz fork del repositorio.
+2. Crea una rama para tu funcionalidad: `git checkout -b feature/tu-funcionalidad`.
+3. Realiza commits claros y descriptivos.
+4. Abre un Pull Request explicando los cambios.
 
-Make sure to run linting and formatting before submitting:
+Antes de enviar, ejecuta los scripts de lint y formateo:
 ```bash
 npm run lint
 npm run format
@@ -118,10 +116,10 @@ npm run format
 
 ---
 
-## 📄 License
+## 📄 Licencia
 
-This project is licensed under the **MIT License** – see the [LICENSE](https://github.com/agustino42/constructora-app/blob/master/LICENSE) file for details.
+Este proyecto está bajo la **Licencia MIT** – revisa el archivo [LICENSE](https://github.com/agustino42/constructora-app/blob/master/LICENSE) para más detalles.
 
 ---
 
-*Built with ❤️ by the Constructora team.*
+*¡Feliz codificación! 🎉*
