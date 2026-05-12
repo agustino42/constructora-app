@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// User (Admin Accounts)
+// ==========================================
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String   // Contraseña encriptada (bcrypt)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// E-commerce: Productos y Categorías
+// ==========================================
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  stock       Int         @default(0)
+  imageUrl    String?     // URL de la imagen principal
+  
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  
+  quoteItems  QuoteItem[]
+  
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// ==========================================
+// Pedidos y Cotizaciones (Flow del Cliente)
+// ==========================================
+model Quote {
+  id            String      @id @default(cuid())
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  status        String      @default("PENDING") // PENDING, CONTACTED, RESOLVED, CANCELLED
+  total         Float       @default(0.0)
+  
+  items         QuoteItem[]
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model QuoteItem {
+  id        String  @id @default(cuid())
+  
+  quoteId   String
+  quote     Quote   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  
+  quantity  Int
+  price     Float   // Precio del producto en el momento de crear la cotización
+}
