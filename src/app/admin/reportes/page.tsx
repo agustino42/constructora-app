@@ -1,8 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import { TrendingUp, Award, DollarSign, Activity } from 'lucide-react';
+import { verifyAdminSession } from '@/lib/dal';
 
 export default async function ReportesPage() {
+  await verifyAdminSession();
   const { data: quotes } = await supabaseAdmin
     .from('quotes')
     .select('status');

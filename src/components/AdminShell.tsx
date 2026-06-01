@@ -3,6 +3,7 @@
 import { Package, FileText, Users, LogOut, Search, Bell, ExternalLink, User, BarChart, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { logout } from '@/app/actions/auth';
 
 export default function AdminShell({ children, pendingQuotes = 0 }: { children: React.ReactNode, pendingQuotes?: number }) {
   const pathname = usePathname();
@@ -44,10 +45,12 @@ export default function AdminShell({ children, pendingQuotes = 0 }: { children: 
         </nav>
 
         <div className="p-4 border-t border-white/10">
-          <Link href="/admin/login" className="flex items-center space-x-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 px-4 py-3 rounded-xl w-full transition-colors">
-            <LogOut size={20} />
-            <span className="font-bold">Cerrar Sesión</span>
-          </Link>
+          <form action={logout}>
+            <button type="submit" className="flex items-center space-x-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 px-4 py-3 rounded-xl w-full transition-colors cursor-pointer">
+              <LogOut size={20} />
+              <span className="font-bold">Cerrar Sesión</span>
+            </button>
+          </form>
         </div>
       </aside>
 

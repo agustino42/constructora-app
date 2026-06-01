@@ -1,8 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import ProductManager from '@/components/ProductManager';
+import { verifyAdminSession } from '@/lib/dal';
 
 export default async function AdminDashboard() {
+  await verifyAdminSession();
   const [productsResponse, categoriesResponse, quotesResponse] = await Promise.all([
     supabaseAdmin
       .from('products')

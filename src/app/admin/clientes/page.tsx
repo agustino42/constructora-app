@@ -1,8 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import { Mail, Phone, Calendar, ArrowUpRight } from 'lucide-react';
+import { verifyAdminSession } from '@/lib/dal';
 
 export default async function ClientesPage() {
+  await verifyAdminSession();
   // Extraer cotizaciones para agrupar clientes únicos (actuando como un CRM)
   const { data: quotes } = await supabaseAdmin
     .from('quotes')

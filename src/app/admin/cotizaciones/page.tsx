@@ -2,8 +2,10 @@ import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import { Clock, CheckCircle, FileText, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { verifyAdminSession } from '@/lib/dal';
 
 export default async function AdminCotizaciones() {
+  await verifyAdminSession();
   const { data: quotes } = await supabaseAdmin
     .from('quotes')
     .select(`
