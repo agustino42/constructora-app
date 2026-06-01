@@ -1,13 +1,21 @@
-import { PrismaClient } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabase';
 import CatalogClient from '@/components/CatalogClient';
 
-const prisma = new PrismaClient();
-
 export default async function CatalogoPage() {
-  const [products, categories] = await Promise.all([
-    prisma.product.findMany({ include: { category: true } }),
-    prisma.category.findMany()
+  const [productsResponse, categoriesResponse] = await Promise.all([
+    supabaseAdmin
+      .from('products')
+      .select(`*, categories (*)`)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false }),
+    supabaseAdmin
+      .from('categories')
+      .select('*')
+      .order('name')
   ]);
+
+  const products = productsResponse.data?.map(p => ({ ...p, category: p.categories })) || [];
+  const categories = categoriesResponse.data || [];
 
   return (
     <div className="min-h-screen bg-[#f4f7f6]">

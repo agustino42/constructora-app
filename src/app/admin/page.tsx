@@ -1,16 +1,33 @@
-import { PrismaClient } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import ProductManager from '@/components/ProductManager';
 
-const prisma = new PrismaClient();
-
 export default async function AdminDashboard() {
-  const [products, categories] = await Promise.all([
-    prisma.product.findMany({ include: { category: true }, orderBy: { createdAt: 'desc' } }),
-    prisma.category.findMany()
+  const [productsResponse, categoriesResponse, quotesResponse] = await Promise.all([
+    supabaseAdmin
+      .from('products')
+      .select(`*, categories (*)`)
+      .order('created_at', { ascending: false }),
+    supabaseAdmin
+      .from('categories')
+      .select('*')
+      .order('name'),
+    supabaseAdmin
+      .from('quotes')
+      .select('status')
   ]);
 
-  const pendingCount = await prisma.quote.count({ where: { status: 'PENDING' } });
+  const products = productsResponse.data?.map(p => ({ ...p, category: p.categories })) || [];
+  const categories = categoriesResponse.data || [];
+  const pendingCount = quotesResponse.data?.filter(q => q.status === 'PENDING').length || 0;
+
+  // Debug: verificar si hay error al cargar categorías
+  console.log('Respuesta completa de categorías:', categoriesResponse);
+  if (categoriesResponse.error) {
+    console.error('Error cargando categorías:', categoriesResponse.error);
+  }
+  console.log('Categorías cargadas:', categories);
+  console.log('Número de categorías:', categories.length);
 
   return (
     <AdminShell pendingQuotes={pendingCount}>

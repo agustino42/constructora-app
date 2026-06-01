@@ -1,21 +1,22 @@
-import { PrismaClient } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import { Clock, CheckCircle, FileText, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
-const prisma = new PrismaClient();
-
 export default async function AdminCotizaciones() {
-  const quotes = await prisma.quote.findMany({
-    include: {
-      items: true
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  });
+  const { data: quotes } = await supabaseAdmin
+    .from('quotes')
+    .select(`
+      *,
+      quote_items (
+        id,
+        quantity,
+        price
+      )
+    `)
+    .order('created_at', { ascending: false });
 
-  const pendingCount = quotes.filter(q => q.status === 'PENDING').length;
+  const pendingCount = quotes?.filter(q => q.status === 'PENDING').length || 0;
 
   return (
     <AdminShell pendingQuotes={pendingCount}>
@@ -38,21 +39,21 @@ export default async function AdminCotizaciones() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {quotes.map(quote => (
+              {quotes?.map(quote => (
                 <tr key={quote.id} className="hover:bg-gray-50 transition-colors group cursor-pointer">
                   <td className="px-6 py-4">
                      <p className="font-black text-gray-900 text-sm flex items-center">
-                        {quote.customerName}
+                        {quote.customer_name}
                         {quote.status === 'PENDING' && <span className="ml-2 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>}
                      </p>
-                     <p className="text-xs text-gray-500 font-medium">{quote.customerEmail} / {quote.customerPhone}</p>
+                     <p className="text-xs text-gray-500 font-medium">{quote.customer_email} / {quote.customer_phone}</p>
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-sm text-gray-700 font-bold">
-                      {new Intl.DateTimeFormat('es-VE', {dateStyle: 'medium', timeStyle: 'short'}).format(new Date(quote.createdAt))}
+                      {new Intl.DateTimeFormat('es-VE', {dateStyle: 'medium', timeStyle: 'short'}).format(new Date(quote.created_at))}
                     </p>
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">
-                      {quote.items.length} artículos
+                      {quote.quote_items?.length || 0} artículos
                     </p>
                   </td>
                   <td className="px-6 py-4">

@@ -1,28 +1,29 @@
-import { PrismaClient } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import { Mail, Phone, Calendar, ArrowUpRight } from 'lucide-react';
 
-const prisma = new PrismaClient();
-
 export default async function ClientesPage() {
   // Extraer cotizaciones para agrupar clientes únicos (actuando como un CRM)
-  const quotes = await prisma.quote.findMany({ orderBy: { createdAt: 'desc' } });
-  const pendingCount = quotes.filter(q => q.status === 'PENDING').length;
+  const { data: quotes } = await supabaseAdmin
+    .from('quotes')
+    .select('*')
+    .order('created_at', { ascending: false });
+  const pendingCount = quotes?.filter(q => q.status === 'PENDING').length || 0;
 
   // Lógica de agrupación de clientes únicos basándonos en el email
   const clientesMap = new Map();
-  quotes.forEach(quote => {
-    if (!clientesMap.has(quote.customerEmail)) {
-      clientesMap.set(quote.customerEmail, {
-        nombre: quote.customerName,
-        email: quote.customerEmail,
-        telefono: quote.customerPhone,
+  quotes?.forEach(quote => {
+    if (!clientesMap.has(quote.customer_email)) {
+      clientesMap.set(quote.customer_email, {
+        nombre: quote.customer_name,
+        email: quote.customer_email,
+        telefono: quote.customer_phone,
         cotizacionesTotal: 1,
         montoTotal: quote.total,
-        ultimaActividad: quote.createdAt,
+        ultimaActividad: quote.created_at,
       });
     } else {
-      const c = clientesMap.get(quote.customerEmail);
+      const c = clientesMap.get(quote.customer_email);
       c.cotizacionesTotal += 1;
       c.montoTotal += quote.total;
     }

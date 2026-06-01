@@ -1,12 +1,13 @@
 import AdminShell from '@/components/AdminShell';
-import { PrismaClient } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabase';
 import SettingsForm from '@/components/SettingsForm';
 import { getSettings } from '@/lib/settings';
 
-const prisma = new PrismaClient();
-
 export default async function AjustesPage() {
-  const pendingCount = await prisma.quote.count({ where: { status: 'PENDING' } });
+  const { data: quotes } = await supabaseAdmin
+    .from('quotes')
+    .select('status');
+  const pendingCount = quotes?.filter(q => q.status === 'PENDING').length || 0;
   const settings = await getSettings();
 
   return (

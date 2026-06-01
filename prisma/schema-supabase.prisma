@@ -1,0 +1,99 @@
+// ==========================================
+// Schema de Prisma para Supabase PostgreSQL
+// ==========================================
+// Para usar este schema:
+// 1. Renombra este archivo a schema.prisma (respalda el original)
+// 2. Actualiza DATABASE_URL en .env con tu connection string de Supabase
+// 3. Ejecuta: npx prisma generate
+// 4. Ejecuta: npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// User (Admin Accounts)
+// ==========================================
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// ==========================================
+// E-commerce: Productos y Categorías
+// ==========================================
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  price       Decimal
+  stock       Int         @default(0)
+  imageUrl    String?
+  
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  
+  quoteItems  QuoteItem[]
+  
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("products")
+}
+
+// ==========================================
+// Pedidos y Cotizaciones (Flow del Cliente)
+// ==========================================
+model Quote {
+  id            String      @id @default(uuid())
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  status        String      @default("PENDING")
+  total         Decimal     @default(0)
+  
+  items         QuoteItem[]
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("quotes")
+}
+
+model QuoteItem {
+  id        String  @id @default(uuid())
+  
+  quoteId   String
+  quote     Quote   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  
+  quantity  Int
+  price     Decimal
+
+  @@map("quote_items")
+}

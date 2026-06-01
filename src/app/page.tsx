@@ -1,16 +1,35 @@
-import { PrismaClient } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabase';
 import CatalogClient from '@/components/CatalogClient';
 import Link from 'next/link';
 import { getSettings } from '@/lib/settings';
 
-const prisma = new PrismaClient();
-
 export default async function Home() {
-  const [products, categories, settings] = await Promise.all([
-    prisma.product.findMany({ include: { category: true } }),
-    prisma.category.findMany(),
+  // Obtener productos y categorías desde Supabase
+  const [productsResponse, categoriesResponse, settings] = await Promise.all([
+    supabaseAdmin
+      .from('products')
+      .select(`
+        *,
+        categories (
+          id,
+          name
+        )
+      `)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false }),
+    supabaseAdmin
+      .from('categories')
+      .select('*')
+      .order('name'),
     getSettings()
   ]);
+
+  const products = productsResponse.data?.map(product => ({
+    ...product,
+    category: product.categories
+  })) || [];
+  
+  const categories = categoriesResponse.data || [];
 
   return (
     <div className="flex flex-col min-h-screen">

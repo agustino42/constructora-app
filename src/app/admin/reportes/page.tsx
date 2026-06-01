@@ -1,11 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabase';
 import AdminShell from '@/components/AdminShell';
 import { TrendingUp, Award, DollarSign, Activity } from 'lucide-react';
 
-const prisma = new PrismaClient();
-
 export default async function ReportesPage() {
-  const pendingCount = await prisma.quote.count({ where: { status: 'PENDING' } });
+  const { data: quotes } = await supabaseAdmin
+    .from('quotes')
+    .select('status');
+  const pendingCount = quotes?.filter(q => q.status === 'PENDING').length || 0;
   
   // Fake data for visual representation of Analytics since installing heavy charting libs takes time
   const monthlyData = [

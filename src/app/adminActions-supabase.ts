@@ -1,39 +1,8 @@
 'use server';
 
-import { PrismaClient } from '@prisma/client';
 import { supabaseAdmin } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
 
-const prisma = new PrismaClient();
-
-// ==========================================
-// FUNCIONES DE LOGIN - MANTENIDAS CON PRISMA LOCAL
-// ==========================================
-export async function loginAdmin(email: string, password: string) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
-
-    if (!user) {
-      return { success: false, error: 'Credenciales inválidas' };
-    }
-
-    // Aquí deberías verificar la contraseña con bcrypt
-    // Por ahora, comparación simple (cambiar en producción)
-    if (user.password !== password) {
-      return { success: false, error: 'Credenciales inválidas' };
-    }
-
-    return { success: true, user: { id: user.id, email: user.email, name: user.name } };
-  } catch (error) {
-    return { success: false, error: 'Error al iniciar sesión' };
-  }
-}
-
-// ==========================================
-// FUNCIONES DE PRODUCTOS - MIGRADAS A SUPABASE
-// ==========================================
 export async function createProduct(data: { name: string, description: string, price: number, stock: number, categoryId: string, imageUrl?: string }) {
   try {
     const { error } = await supabaseAdmin
@@ -207,6 +176,7 @@ export async function updateQuoteStatus(id: string, status: string) {
   }
 }
 
+// Función para upload de imagen (mantenemos la misma lógica local por ahora)
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -218,20 +188,13 @@ export async function uploadImage(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    // Limpiamos el nombre original quitando espacios
     const safeName = file.name.replace(/\s+/g, '_');
     const filename = `${Date.now()}-${safeName}`;
     
-    // Ruta absoluta hasta `public/uploads`
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    
-    // Aseguramos que el directorio exista
     await fs.mkdir(uploadDir, { recursive: true });
-    
-    // Escribimos el archivo físicamente en el disco
     await fs.writeFile(path.join(uploadDir, filename), buffer);
     
-    // Devolvemos la ruta relativa que el navegador usará (sin /public al inicio)
     return { success: true, url: `/uploads/${filename}` };
   } catch (error) {
     return { success: false, error: 'Error al procesar la imagen' };
@@ -243,7 +206,7 @@ import { saveSettingsFile } from '@/lib/settings';
 export async function saveGeneralSettings(formData: any) {
   try {
      await saveSettingsFile(formData);
-     revalidatePath('/'); // Forzamos refresh del home público
+     revalidatePath('/');
      revalidatePath('/admin/ajustes');
      return { success: true };
   } catch(e) {
