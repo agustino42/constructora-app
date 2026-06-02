@@ -56,7 +56,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
       price: parseFloat(formData.price),
       stock: parseInt(formData.stock, 10),
       categoryId: formData.categoryId,
-      imageUrl: finalImageUrl || '/images/tubo.png' // fallback temporal real o de default
+      imageUrl: finalImageUrl || undefined
     };
 
     if (editTarget) {
@@ -122,7 +122,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
                   <div className="flex items-center space-x-4">
                       <div 
                         className="w-12 h-12 bg-gray-100 rounded-lg bg-cover bg-center mix-blend-multiply flex-shrink-0"
-                        style={{ backgroundImage: `url(${product.imageUrl === '/images/tubo.png' ? 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop' : product.imageUrl})` }}>
+                        style={{ backgroundImage: product.imageUrl ? `url(${product.imageUrl})` : 'none' }}>
                       </div>
                       <div>
                         <p className="text-sm font-bold text-gray-900">{product.name}</p>

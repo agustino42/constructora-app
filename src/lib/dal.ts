@@ -15,6 +15,17 @@ export async function verifySession() {
   return data.user
 }
 
+export async function verifyUserSession() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.getUser()
+
+  if (error || !data?.user) {
+    redirect('/iniciar-sesion')
+  }
+
+  return data.user
+}
+
 export async function verifyAdminSession() {
   const user = await verifySession()
 

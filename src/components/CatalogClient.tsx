@@ -5,6 +5,7 @@ import ProductCard from './ProductCard';
 import { Search, X, Check, Filter, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useQuote } from './QuoteContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Product {
   id: string;
@@ -109,23 +110,60 @@ export default function CatalogClient({ initialProducts, categories }: { initial
               <p className="text-gray-500 font-bold">No se encontraron productos para tu búsqueda.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredProducts.map(p => (
-                <div key={p.id} onClick={() => setSelectedProduct(p)} className="cursor-pointer">
-                  <ProductCard product={p} />
-                </div>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.05 }
+                }
+              }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            >
+              {filteredProducts.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  onClick={() => setSelectedProduct(p)}
+                  className="cursor-pointer"
+                >
+                  <ProductCard product={p} index={i} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </main>
       </div>
 
       {/* MODAL DEL PRODUCTO POPUP */}
-      {selectedProduct && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setSelectedProduct(null)}></div>
-          
-          <div className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl relative z-10 flex flex-col md:flex-row animate-in fade-in zoom-in duration-200">
+      <AnimatePresence>
+        {selectedProduct && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+              onClick={() => setSelectedProduct(null)}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl relative z-10 flex flex-col md:flex-row"
+            >
             <button 
               onClick={() => setSelectedProduct(null)}
               className="absolute top-4 right-4 bg-gray-100 p-2 rounded-full text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors z-20"
@@ -135,10 +173,21 @@ export default function CatalogClient({ initialProducts, categories }: { initial
 
             {/* Modal Imagen */}
             <div className="w-full md:w-1/2 bg-gray-50 flex items-center justify-center p-8 border-b md:border-b-0 md:border-r border-gray-100">
-               <div 
-                  className="w-full aspect-square max-w-sm rounded-xl shadow-lg bg-cover bg-center mix-blend-multiply"
-                  style={{ backgroundImage: `url(${selectedProduct.imageUrl === '/images/tubo.png' ? 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop' : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="%23f3f4f6"%3E%3Crect width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="24" fill="%239ca3af"%3EImagen no disponible%3C/text%3E%3C/svg%3E'})` }}>
-               </div>
+               {selectedProduct.imageUrl ? (
+                  <div
+                    className="w-full aspect-square max-w-sm rounded-xl shadow-lg bg-cover bg-center"
+                    style={{ backgroundImage: `url(${selectedProduct.imageUrl})` }}
+                  />
+                ) : (
+                  <div className="w-full aspect-square max-w-sm rounded-xl bg-gray-100 flex items-center justify-center">
+                    <div className="text-center p-4">
+                      <svg className="w-16 h-16 text-gray-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-sm text-gray-400 font-medium">Imagen no disponible</p>
+                    </div>
+                  </div>
+                )}
             </div>
 
             {/* Modal Detalles */}
@@ -177,9 +226,10 @@ export default function CatalogClient({ initialProducts, categories }: { initial
               </div>
             </div>
 
-          </div>
-        </div>
+        </motion.div>
+      </motion.div>
       )}
+      </AnimatePresence>
 
     </div>
   );

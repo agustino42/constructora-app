@@ -88,9 +88,9 @@ export default function SearchBar() {
                   {/* Para simplificar, mandamos al catálogo con el buscador, o a cotización */}
                   <Link href={`/catalogo`} onClick={() => setIsOpen(false)}>
                     <div className="px-4 py-3 hover:bg-gray-50 flex items-center space-x-3 cursor-pointer transition-colors border-b border-gray-50 last:border-0">
-                      <div 
+                      <div
                         className="w-10 h-10 rounded bg-gray-100 bg-cover bg-center shrink-0"
-                        style={{ backgroundImage: `url(${product.imageUrl === '/images/tubo.png' ? 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop' : product.imageUrl})` }}
+                        style={{ backgroundImage: product.imageUrl ? `url(${product.imageUrl})` : 'none' }}
                       ></div>
                       <div className="flex-1">
                         <p className="text-sm font-bold text-gray-900 leading-tight line-clamp-1">{product.name}</p>
