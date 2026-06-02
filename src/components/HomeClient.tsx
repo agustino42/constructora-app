@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import CatalogClient from './CatalogClient'
-import { Package, ClipboardCheck, FileText, MessageCircle, Shield, Truck, Headphones, BadgeCheck, TrendingUp, Factory, MessageCircle as WhatsAppIcon, ArrowUp, Hammer, HardHat, Building2 } from 'lucide-react'
+import { Package, ClipboardCheck, FileText, MessageCircle, Shield, Truck, Headphones, BadgeCheck, TrendingUp, Factory, ArrowUp, Hammer, HardHat, Building2 } from 'lucide-react'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -102,16 +102,6 @@ export default function HomeClient({
 }) {
   const { scrollY } = useScroll()
   const bgY = useTransform(scrollY, [0, 500], [0, 150])
-  const opacity = useTransform(scrollY, [0, 400], [1, 0])
-
-  const [showWhatsApp, setShowWhatsApp] = useState(false)
-
-  useEffect(() => {
-    const unsub = scrollY.on('change', (v) => {
-      setShowWhatsApp(v > 300)
-    })
-    return () => unsub()
-  }, [scrollY])
 
   return (
     <>
@@ -424,19 +414,6 @@ export default function HomeClient({
         </div>
       </motion.section>
 
-      {/* WHATSAPP FLOTANTE */}
-      <motion.a
-        href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`}
-        target="_blank"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: showWhatsApp ? 1 : 0, scale: showWhatsApp ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-green-600 text-white shadow-2xl flex items-center justify-center hover:bg-green-700 transition-colors hover:-translate-y-1"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <WhatsAppIcon size={28} />
-      </motion.a>
     </>
   )
 }

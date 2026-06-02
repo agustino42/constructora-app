@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import { QuoteProvider } from '@/components/QuoteContext';
+import ChatBot from '@/components/ChatBot';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans min-h-screen flex flex-col bg-gray-50`}>
         <QuoteProvider>
           <Navbar />
+          <ChatBot />
           <main className="flex-1 flex flex-col">
           {children}
         </main>
