@@ -102,19 +102,37 @@ export default function HomeClient({
 }) {
   const { scrollY } = useScroll()
   const bgY = useTransform(scrollY, [0, 500], [0, 150])
+  const [currentImage, setCurrentImage] = useState(0)
+  const images = ['/uploads/home1.jpeg', '/uploads/home2.jpeg', '/uploads/home3.jpeg']
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % images.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <>
       {/* HERO */}
       <section className="relative h-[90vh] min-h-[600px] overflow-hidden">
         {/* Parallax Background */}
-        <motion.div
-          style={{
-            y: bgY,
-            backgroundImage: `url(https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=2070&auto=format&fit=crop)`,
-          }}
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
-        />
+        {images.map((img, index) => (
+          <motion.div
+            key={img}
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: currentImage === index ? 1 : 0,
+              scale: currentImage === index ? 1.1 : 1
+            }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            style={{
+              y: bgY,
+              backgroundImage: `url(${img})`,
+            }}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-r from-brand-secondary/95 via-brand-secondary/80 to-brand-secondary/60" />
         <div className="absolute inset-0 opacity-[0.08]">
           <div className="w-full h-full bg-[radial-gradient(#e67e22_1px,transparent_1px)] [background-size:24px_24px]" />
