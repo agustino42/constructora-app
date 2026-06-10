@@ -14,7 +14,7 @@ export default async function CatalogoPage() {
       .order('name')
   ]);
 
-  const products = productsResponse.data?.map(p => ({ ...p, category: p.categories })) || [];
+  const products = productsResponse.data?.map(p => ({ ...p, imageUrl: p.image_url, category: p.categories })) || [];
   const categories = categoriesResponse.data || [];
 
   return (

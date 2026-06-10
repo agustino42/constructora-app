@@ -122,6 +122,7 @@ export async function getProducts() {
 
     return products?.map(product => ({
       ...product,
+      imageUrl: product.image_url,
       category: product.categories
     })) || [];
   } catch (error) {

@@ -19,7 +19,7 @@ export default async function AdminDashboard() {
       .select('status')
   ]);
 
-  const products = productsResponse.data?.map(p => ({ ...p, category: p.categories })) || [];
+  const products = productsResponse.data?.map(p => ({ ...p, imageUrl: p.image_url, category: p.categories })) || [];
   const categories = categoriesResponse.data || [];
   const pendingCount = quotesResponse.data?.filter(q => q.status === 'PENDING').length || 0;
 

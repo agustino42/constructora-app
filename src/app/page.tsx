@@ -18,6 +18,7 @@ export default async function Home() {
 
   const products = productsResponse.data?.map(product => ({
     ...product,
+    imageUrl: product.image_url,
     category: product.categories
   })) || [];
   
